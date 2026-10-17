@@ -1,0 +1,14 @@
+# Generated data: rebuilt by update_data.py (third-party rankings, so not redistributed here)
+data/data.js
+data/cache/
+data/update.log
+data/*.tmp
+
+# Python
+__pycache__/
+*.pyc
+
+# Editor / OS
+.vscode/
+.DS_Store
+Thumbs.db

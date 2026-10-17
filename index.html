@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1d2433">
+<title>Pup Fantasy</title>
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<style>
+  :root {
+    --bg: #fbf3e2; --card: #fffdf7; --ink: #1d2433; --muted: #6c6455; --line: #ecdcbc;
+    --accent: #b4560f; --accent-ink: #ffffff; --good: #2f7d4f; --bad: #b8412f; --warn: #9a5f1c;
+    --qb: #b8412f; --rb: #2f7d4f; --wr: #3f6f9b; --te: #9a6320;
+    --hero: #1d2433; --hero-ink: #fbf3e2; --hero-muted: #c8bfa8; --stripe: #e08a2c; --tan: #c98a4b;
+    --glow: rgba(224, 138, 44, .10); --hover: rgba(224, 138, 44, .08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121620; --card: #1b2130; --ink: #f4ead7; --muted: #a9a08f; --line: #2d364a;
+      --accent: #f0993f; --accent-ink: #1d1305; --good: #5ccb8a; --bad: #ff8670; --warn: #f2b45a;
+      --qb: #ff8670; --rb: #5ccb8a; --wr: #7fb2e0; --te: #e8b366;
+      --hero: #0c0f17; --hero-ink: #f4ead7; --hero-muted: #a9a08f; --stripe: #e08a2c; --tan: #c98a4b;
+      --glow: rgba(224, 138, 44, .07); --hover: rgba(240, 153, 63, .10);
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; color: var(--ink); background: radial-gradient(ellipse 80% 420px at 15% 0, var(--glow), transparent) 0 0 / 100% 520px no-repeat, var(--bg);
+    font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  body::before { content: ""; display: block; height: 6px; background: linear-gradient(90deg, var(--stripe), var(--tan) 55%, var(--stripe)); }
+  ::selection { background: rgba(224, 138, 44, .35); }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 16px 48px; }
+  /* navy band behind the logo; the shadow + clip-path stretch it to the full window width */
+  header { margin: 0 -16px; padding: 16px 16px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    background: var(--hero); box-shadow: 0 0 0 100vmax var(--hero); clip-path: inset(0 -100vmax); }
+  .brand { flex: none; line-height: 0; }
+  .brand img { width: 150px; height: auto; display: block; }
+  .headtext { flex: 1; min-width: 240px; }
+  @media (max-width: 520px) { .brand img { width: 120px; } header { gap: 10px; } }
+  h1 { font-size: 22px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  header h1 { color: var(--hero-ink); }
+  .sub { color: var(--muted); font-size: 13px; }
+  header .sub { color: var(--hero-muted); }
+  nav { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: 14px 0 20px; overflow-x: auto; }
+  nav button { background: none; border: 0; padding: 10px 14px; font: inherit; color: var(--muted);
+    cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
+  nav button:hover { color: var(--ink); }
+  nav button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--stripe); font-weight: 700; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; box-shadow: 0 1px 2px rgba(110, 80, 30, .07); }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  input[type="search"], input[type="text"], input[type="number"] { font: inherit; color: var(--ink); background: var(--bg);
+    border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-width: 0; }
+  input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .chip { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px;
+    padding: 5px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+  .chip:hover:not(:disabled) { border-color: var(--accent); }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 8px 8px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th:nth-child(2), td:nth-child(2) { text-align: left; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted);
+    cursor: pointer; user-select: none; font-weight: 600; }
+  th[aria-sort] { color: var(--accent); }
+  tbody tr:hover td { background: var(--hover); }
+  tbody tr:last-child td { border-bottom: 0; }
+  .tablewrap { overflow-x: auto; }
+  .pos { display: inline-block; min-width: 28px; text-align: center; font-size: 11px; font-weight: 700;
+    border-radius: 4px; padding: 1px 5px; color: #fff; }
+  .pos.QB { background: var(--qb); } .pos.RB { background: var(--rb); }
+  .pos.WR { background: var(--wr); } .pos.TE { background: var(--te); }
+  .pos.QB, .pos.RB, .pos.WR, .pos.TE { color: var(--accent-ink); }
+  .muted { color: var(--muted); } .team { color: var(--muted); font-size: 12px; margin-left: 6px; }
+  .inj { color: var(--bad); font-size: 11px; font-weight: 700; margin-left: 6px; }
+  .num { font-variant-numeric: tabular-nums; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 680px) { .two { grid-template-columns: 1fr; } }
+  h2 { font-size: 15px; margin: 0 0 10px; }
+  .picker { position: relative; margin-bottom: 10px; }
+  .picker input { width: 100%; }
+  .menu { position: absolute; z-index: 5; left: 0; right: 0; top: calc(100% + 4px); background: var(--card);
+    border: 1px solid var(--line); border-radius: 8px; max-height: 260px; overflow-y: auto;
+    box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+  .menu button { display: flex; width: 100%; gap: 8px; align-items: center; background: none; border: 0;
+    padding: 8px 10px; font: inherit; color: var(--ink); cursor: pointer; text-align: left; }
+  .menu button:hover, .menu button.on { background: var(--bg); }
+  .menu .r { margin-left: auto; color: var(--muted); font-size: 12px; }
+  .av { flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--line); color: var(--muted);
+    display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; overflow: hidden; }
+  .av img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .menu .av { width: 28px; height: 28px; font-size: 10px; }
+  .pl { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+  .lbl { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; margin: 8px 0 4px; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+    background: var(--accent); color: var(--accent-ink); }
+  .sug { margin-bottom: 14px; }
+  .sug-head { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  .sug-head .gain { font-size: 18px; font-weight: 700; }
+  .sug ul { margin: 4px 0 0; padding-left: 18px; font-size: 14px; }
+  .sug li { margin: 3px 0; }
+  .lock { margin-left: 8px; }
+  .role { font-size: 12px; color: var(--muted); margin-left: auto; text-align: right; white-space: nowrap; }
+  .role b { color: var(--ink); }
+  .picked .role + .lock { margin-left: 8px; }
+  .picked { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .picked:last-of-type { border-bottom: 0; }
+  .picked .x { margin-left: auto; background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 18px; line-height: 1; }
+  .picked .v { margin-left: auto; text-align: right; font-size: 13px; }
+  .picked .x { margin-left: 8px; }
+  .total { display: flex; justify-content: space-between; margin-top: 10px; font-weight: 600; }
+  .verdict { margin-top: 16px; text-align: center; }
+  .verdict .big { font-size: 20px; font-weight: 700; }
+  .meter { display: flex; height: 12px; border-radius: 6px; overflow: hidden; background: var(--line); margin: 14px 0 6px; }
+  .meter i { display: block; transition: width .25s; }
+  .meter .a { background: var(--wr); } .meter .b { background: var(--stripe); }
+  .good { color: var(--good); } .bad { color: var(--bad); }
+  .warn { margin-top: 8px; padding: 8px 12px; border: 1px solid var(--warn); border-radius: 8px; color: var(--warn); font-size: 13px; }
+  header .warn { background: rgba(224, 138, 44, .14); border-color: var(--stripe); color: #ffd9a3; }
+  nav button[data-tab="settings"] { margin-left: auto; }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 8px; padding: 8px 18px; font: inherit; font-weight: 600; cursor: pointer; }
+  .btn-primary:disabled, .chip:disabled { opacity: .45; cursor: default; }
+  .savebar { position: sticky; top: 8px; z-index: 6; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .note.warnnote { color: var(--warn); }
+  .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; margin-bottom: 14px; }
+  .fld { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+  .fld input { width: 100%; }
+  .setgroup { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; margin: 4px 0 8px; }
+  .setsum { font-size: 13px; line-height: 1.6; }
+  .setsum b { color: var(--ink); }
+  .empty { color: var(--muted); padding: 10px 0; font-size: 13px; }
+  .stat { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 13px; margin-top: 10px; }
+  .stat span:nth-child(odd) { color: var(--muted); } .stat span:nth-child(even) { text-align: right; font-variant-numeric: tabular-nums; }
+  .win { outline: 2px solid var(--good); }
+  .note { font-size: 12px; color: var(--muted); margin-top: 14px; }
+  .more { margin-top: 12px; text-align: center; }
+  .more .chip { padding: 7px 18px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="." aria-label="Pup Fantasy home"><img src="assets/logo.svg" width="150" height="129" alt="Pup Fantasy: a dog leaping to catch a football"></a>
+    <div class="headtext">
+      <h1>Rest-of-season rankings</h1>
+      <div class="sub" id="meta">Loading…</div>
+      <div class="warn" id="srcWarn" role="status" hidden></div>
+    </div>
+  </header>
+  <nav role="tablist">
+    <button role="tab" aria-selected="true" data-tab="rank">Rankings</button>
+    <button role="tab" aria-selected="false" data-tab="trade">Trade calculator</button>
+    <button role="tab" aria-selected="false" data-tab="sit">Start / Sit</button>
+    <button role="tab" aria-selected="false" data-tab="suggest">Suggested trades</button>
+    <button role="tab" aria-selected="false" data-tab="waiver">Waiver wire</button>
+    <button role="tab" aria-selected="false" data-tab="settings">&#9881; League settings</button>
+  </nav>
+
+  <!-- RANKINGS -->
+  <section id="tab-rank">
+    <div class="card">
+      <div class="row">
+        <input type="search" id="q" placeholder="Search player or team" aria-label="Search players" style="flex:1;min-width:180px">
+        <span id="posChips"></span>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr id="thead"></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="more"><button class="chip" id="more" hidden>Show more</button></div>
+      <p class="note" id="rankNote"></p>
+    </div>
+  </section>
+
+  <!-- TRADE -->
+  <section id="tab-trade" hidden>
+    <div class="two">
+      <div class="card" id="sideA"></div>
+      <div class="card" id="sideB"></div>
+    </div>
+    <div class="card verdict" style="margin-top:16px" id="tradeResult"></div>
+  </section>
+
+  <!-- START/SIT -->
+  <section id="tab-sit" hidden>
+    <div class="two">
+      <div class="card" id="sitA"></div>
+      <div class="card" id="sitB"></div>
+    </div>
+    <div class="card verdict" style="margin-top:16px" id="sitResult"></div>
+  </section>
+
+  <!-- SUGGESTED TRADES -->
+  <section id="tab-suggest" hidden>
+    <div class="two">
+      <div>
+        <div class="card" id="rosterCard"></div>
+        <div class="card" id="wantCard" style="margin-top:16px"></div>
+      </div>
+      <div id="sugResults"></div>
+    </div>
+  </section>
+
+  <!-- WAIVER WIRE -->
+  <section id="tab-waiver" hidden>
+    <div class="two">
+      <div class="card" id="wwRosterCard"></div>
+      <div id="wwResults"></div>
+    </div>
+  </section>
+
+  <!-- LEAGUE SETTINGS -->
+  <section id="tab-settings" hidden></section>
+</div>
+
+<script src="data/data.js"></script>
+<script>
+(function () {
+  "use strict";
+  const D = window.FF_DATA;
+  const $ = (s, el = document) => el.querySelector(s);
+  function h(tag, props, ...kids) {           // tiny DOM builder; uses textContent so scraped names can't inject HTML
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(props || {})) {
+      if (k === "class") e.className = v;
+      else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+      else if (v !== false && v != null) e.setAttribute(k, v === true ? "" : v);
+    }
+    for (const k of kids.flat(Infinity)) if (k != null) e.append(k.nodeType ? k : document.createTextNode(k));   // nested lists at any depth
+    return e;
+  }
+  if (!D) { $("#meta").textContent = "No data found. Run: python update_data.py"; return; }
+  const P = D.players, byId = Object.fromEntries(P.map(p => [p.id, p]));
+  const fmt = (n, d = 1) => n == null ? "–" : Number(n).toFixed(d);
+  const posTag = p => h("span", { class: "pos " + p.pos }, p.pos);
+  // Player headshot from ESPN; initials show until (or if) the image fails to load.
+  const avatar = p => {
+    const box = h("span", { class: "av", "aria-hidden": "true" }, p.name.split(/\s+/).map(w => w[0]).slice(0, 2).join(""));
+    if (p.espnId) {
+      const img = h("img", { src: `https://a.espncdn.com/i/headshots/nfl/players/full/${p.espnId}.png`, alt: "", loading: "lazy" });
+      img.addEventListener("load", () => box.replaceChildren(img));
+    }
+    return box;
+  };
+  // replaceChildren() stringifies arrays, so flatten nested child lists first
+  const fill = (el, ...kids) => el.replaceChildren(...kids.flat(Infinity).filter(k => k != null));
+  const nameCell = p => [p.name, h("span", { class: "team" }, p.team), p.inj ? h("span", { class: "inj" }, p.inj) : null];
+
+  $("#meta").textContent = `Week ${D.week} · ${D.season} · updated ${D.updated} · 10-team superflex · 0.5 PPR + 0.5 per rushing/receiving first down`;
+
+  // Tell the user when a data source could not be refreshed (the updater falls back to its last good copy).
+  const notices = (D.sourceStatus || []).filter(s => s.status !== "ok").map(s => s.status === "cached"
+    ? `${s.name}: showing saved data from ${s.asOf} because the live update failed`
+    : `${s.name}: unavailable, so it is left out of the averages`);
+  // The rankings refresh daily at 9 AM Pacific; warn if the PC missed it (e.g. was off for a day or more).
+  const ageHours = (Date.now() - new Date(D.updated.replace(" ", "T")).getTime()) / 36e5;
+  if (ageHours > 30) notices.unshift(`Rankings were last refreshed ${Math.floor(ageHours / 24)} day${Math.floor(ageHours / 24) === 1 ? "" : "s"} ago. They update daily at 9 AM Pacific when this PC is on.`);
+  if (notices.length) { const w = $("#srcWarn"); w.hidden = false; w.textContent = notices.join(" · "); }
+
+  // ---------- tabs
+  document.querySelectorAll("nav button").forEach(b => b.addEventListener("click", () => {
+    document.querySelectorAll("nav button").forEach(x => x.setAttribute("aria-selected", x === b));
+    for (const t of ["rank", "trade", "sit", "suggest", "waiver", "settings"]) $("#tab-" + t).hidden = t !== b.dataset.tab;
+  }));
+
+  // ---------- rankings
+  const cols = [
+    { k: "rank", label: "#", get: p => p.rank },
+    { k: "name", label: "Player", get: p => p.name },
+    { k: "pos", label: "Pos", get: p => p.pos },
+    { k: "posRank", label: "Pos rk", get: p => p.posRank },
+    { k: "ros", label: "ROS pts", get: p => p.ros },
+    { k: "rosRoto", label: "Rotowire", get: p => p.rosRoto },
+    { k: "rosESPN", label: "ESPN", get: p => p.rosESPN },
+    { k: "rosFP", label: "FantasyPros", get: p => p.rosFP },
+    { k: "rosFlock", label: "Flock", get: p => p.rosFlock },
+    { k: "rosCalc", label: "FantasyCalc", get: p => p.rosCalc },
+    { k: "rosDS", label: "Draft Sharks", get: p => p.rosDS },
+    { k: "wk", label: "Wk " + D.week, get: p => p.wk },
+    { k: "value", label: "Value", get: p => p.value },
+  ];
+  let sortKey = "rank", sortDir = 1, posFilter = "ALL", shown = 50;
+  const chips = $("#posChips");
+  ["ALL", "QB", "RB", "WR", "TE"].forEach(pos => chips.append(h("button", {
+    class: "chip", "aria-pressed": pos === "ALL", style: "margin-right:4px",
+    onclick: e => { posFilter = pos; shown = 50; chips.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b === e.currentTarget)); drawRank(); }
+  }, pos)));
+  $("#q").addEventListener("input", () => { shown = 50; drawRank(); });
+  $("#more").addEventListener("click", () => { shown += 50; drawRank(); });
+
+  function drawRank() {
+    const q = $("#q").value.trim().toLowerCase();
+    let rows = P.filter(p => !p.deep && (posFilter === "ALL" || p.pos === posFilter) &&
+      (!q || p.name.toLowerCase().includes(q) || p.team.toLowerCase() === q));
+    const c = cols.find(c => c.k === sortKey);
+    rows = rows.slice().sort((a, b) => {
+      const x = c.get(a), y = c.get(b);
+      if (x == null) return 1; if (y == null) return -1;
+      return (typeof x === "string" ? x.localeCompare(y) : x - y) * sortDir;
+    });
+    const tr = $("#thead"); tr.replaceChildren(...cols.map(c => h("th", {
+      "aria-sort": c.k === sortKey ? (sortDir > 0 ? "ascending" : "descending") : false,
+      onclick: () => { if (sortKey === c.k) sortDir *= -1; else { sortKey = c.k; sortDir = ["ros", "rosRoto", "rosESPN", "rosFP", "rosFlock", "rosCalc", "rosDS", "wk", "value"].includes(c.k) ? -1 : 1; } drawRank(); }
+    }, c.label + (c.k === sortKey ? (sortDir > 0 ? " ▲" : " ▼") : ""))));
+    $("#tbody").replaceChildren(...rows.slice(0, shown).map(p => h("tr", {},
+      h("td", { class: "num muted" }, p.rank), h("td", {}, nameCell(p)), h("td", {}, posTag(p)),
+      h("td", { class: "num" }, p.posRank), h("td", { class: "num" }, fmt(p.ros)),
+      h("td", { class: "num muted" }, fmt(p.rosRoto)), h("td", { class: "num muted" }, fmt(p.rosESPN)),
+      h("td", { class: "num muted" }, fmt(p.rosFP)), h("td", { class: "num muted" }, fmt(p.rosFlock)), h("td", { class: "num muted" }, fmt(p.rosCalc)), h("td", { class: "num muted" }, fmt(p.rosDS)),
+      h("td", { class: "num" }, p.wk == null ? "bye" : fmt(p.wk)), h("td", { class: "num" }, fmt(p.value)))));
+    $("#more").hidden = rows.length <= shown;
+  }
+  const drawRankNote = () => {
+    const R = D.replacementRank, sf = S.lineup.SUPERFLEX > 0;
+    $("#rankNote").textContent = "ROS pts = rest-of-season fantasy points in your league's scoring, averaged across sources. " +
+      "Value = ROS pts above a replacement-level player at that position (this is what the overall rank and trade calculator use). " +
+      `For your league settings, replacement level is QB${R.QB}, RB${R.RB}, WR${R.WR} and TE${R.TE}` +
+      (sf ? `; with superflex, about ${R.QB} QBs are needed, so the QB replacement level is deep and elite QBs are worth more` : "") +
+      ". Change scoring and roster rules in League settings. Sources: " + D.sources.join("; ") + ".";
+  };
+  drawRank();
+
+  // ---------- player picker (search + dropdown)
+  function picker(onPick, placeholder) {
+    const input = h("input", { type: "text", placeholder, "aria-label": placeholder, autocomplete: "off" });
+    const menu = h("div", { class: "menu", hidden: true });
+    let items = [], idx = -1;
+    function open() {
+      const q = input.value.trim().toLowerCase();
+      items = P.filter(p => !q || p.name.toLowerCase().includes(q)).slice(0, 8);
+      idx = 0;
+      menu.replaceChildren(...items.map((p, i) => h("button", { type: "button", class: i === 0 ? "on" : "", onmousedown: e => { e.preventDefault(); choose(p); } },
+        avatar(p), posTag(p), p.name, h("span", { class: "team" }, p.team), h("span", { class: "r" }, "#" + p.rank))));
+      menu.hidden = !items.length;
+    }
+    function choose(p) { onPick(p); input.value = ""; menu.hidden = true; }
+    input.addEventListener("input", open);
+    input.addEventListener("focus", open);
+    input.addEventListener("blur", () => setTimeout(() => menu.hidden = true, 100));
+    input.addEventListener("keydown", e => {
+      if (menu.hidden) return;
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        idx = (idx + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
+        [...menu.children].forEach((b, i) => b.classList.toggle("on", i === idx)); e.preventDefault();
+      } else if (e.key === "Enter" && items[idx]) { choose(items[idx]); e.preventDefault(); }
+      else if (e.key === "Escape") menu.hidden = true;
+    });
+    return h("div", { class: "picker" }, input, menu);
+  }
+
+  // ---------- trade calculator
+  // Stars are worth more than the sum of their parts (you can only start so many players), so each player's
+  // value is raised to a power before summing. This stops "three 20-value guys" from beating "one 60-value guy".
+  const STAR_EXP = 1.35;
+  const tradeScore = list => list.reduce((s, p) => s + Math.pow(p.tradeValue, STAR_EXP), 0);
+  const sides = { A: [], B: [] };
+  function drawSide(key, root, title) {
+    const list = sides[key];
+    fill(root, 
+      h("h2", {}, title),
+      picker(p => { if (!list.includes(p) && !sides[key === "A" ? "B" : "A"].includes(p)) { list.push(p); drawTrade(); } }, "Add a player…"),
+      list.length ? list.map(p => h("div", { class: "picked" }, avatar(p), posTag(p), p.name, h("span", { class: "team" }, p.team),
+        h("span", { class: "v" }, fmt(p.tradeValue) + " trade value", h("br"), h("span", { class: "muted" }, fmt(p.ros) + " ROS pts")),
+        h("button", { class: "x", "aria-label": "Remove " + p.name, onclick: () => { list.splice(list.indexOf(p), 1); drawTrade(); } }, "×")))
+        : h("div", { class: "empty" }, "No players yet."),
+      h("div", { class: "total" }, h("span", {}, "Total trade value"), h("span", { class: "num" }, fmt(list.reduce((s, p) => s + p.tradeValue, 0))))
+    );
+  }
+  function drawTrade() {
+    drawSide("A", $("#sideA"), "You give");
+    drawSide("B", $("#sideB"), "You get");
+    const a = tradeScore(sides.A), b = tradeScore(sides.B), out = $("#tradeResult");
+    if (!sides.A.length || !sides.B.length) { out.replaceChildren(h("div", { class: "muted" }, "Add players to both sides to see who wins the trade.")); return; }
+    const tot = a + b || 1, diff = (b - a) / Math.max(a, b, 1);
+    let verdict, cls;
+    if (Math.abs(diff) < 0.07) { verdict = "Fair trade"; cls = ""; }
+    else if (diff > 0) { verdict = Math.abs(diff) > 0.25 ? "Big win for you" : "Favors you"; cls = "good"; }
+    else { verdict = Math.abs(diff) > 0.25 ? "Big loss for you" : "Favors the other side"; cls = "bad"; }
+    const rosA = sides.A.reduce((s, p) => s + p.ros, 0), rosB = sides.B.reduce((s, p) => s + p.ros, 0);
+    const notes = [];
+    const qbp = (D.league || {}).qbTradePremium;
+    if (qbp && qbp !== 1 && [...sides.A, ...sides.B].some(p => p.pos === "QB")) notes.push(`QBs get a ${Math.round((qbp - 1) * 100)}% superflex premium on top of their projected-points value.`);
+    if (sides.A.length !== sides.B.length) notes.push(`This is a ${sides.A.length}-for-${sides.B.length}. The side with fewer players gets a roster spot back; the calculator already weights stars more heavily than depth.`);
+    fill(out,
+      h("div", { class: "big " + cls }, verdict),
+      h("div", { class: "meter", role: "img", "aria-label": "Share of total trade value" },
+        h("i", { class: "a", style: `width:${(a / tot * 100).toFixed(1)}%` }), h("i", { class: "b", style: `width:${(b / tot * 100).toFixed(1)}%` })),
+      h("div", { class: "sub" }, `You give ${fmt(a / tot * 100, 0)}% · You get ${fmt(b / tot * 100, 0)}%  ·  ROS points: give ${fmt(rosA)} / get ${fmt(rosB)}`),
+      notes.map(n => h("p", { class: "note" }, n)));
+  }
+  drawTrade();
+
+  // ---------- start / sit
+  const sit = { A: null, B: null };
+  function drawSitSide(key, root, title) {
+    const p = sit[key], other = sit[key === "A" ? "B" : "A"];
+    root.className = "card" + (p && other && winner() === p ? " win" : "");
+    fill(root, h("h2", {}, title),
+      picker(x => { sit[key] = x; drawSit(); }, "Pick a player…"),
+      p ? [h("div", { class: "picked" }, avatar(p), posTag(p), p.name, h("span", { class: "team" }, p.team), p.inj ? h("span", { class: "inj" }, p.inj) : null,
+          h("button", { class: "x", "aria-label": "Clear", onclick: () => { sit[key] = null; drawSit(); } }, "×")),
+        h("div", { class: "stat" },
+          h("span", {}, "Week " + D.week + " projection"), h("span", {}, p.wk == null ? "bye / no game" : fmt(p.wk) + " pts"),
+          h("span", {}, "Rotowire (your scoring)"), h("span", {}, fmt(p.wkRoto)),
+          h("span", {}, "ESPN (your scoring)"), h("span", {}, fmt(p.wkESPN)),
+          h("span", {}, "FantasyPros consensus rank"), h("span", {}, p.fpWkRank == null ? "–" : p.pos + fmt(p.fpWkRank, 1)),
+          h("span", {}, "Flock consensus rank"), h("span", {}, p.flockWkRank == null ? "–" : p.pos + fmt(p.flockWkRank, 1)),
+          h("span", {}, "Draft Sharks rank"), h("span", {}, p.dsWkRank == null ? "–" : p.pos + fmt(p.dsWkRank, 1)),
+          h("span", {}, "Opponent"), h("span", {}, p.opp || "–"),
+          h("span", {}, "Rest-of-season rank"), h("span", {}, "#" + p.rank + " (" + p.pos + p.posRank + ")"))]
+        : h("div", { class: "empty" }, "Choose a player to compare."));
+  }
+  function winner() {
+    const a = sit.A, b = sit.B;
+    if (!a || !b) return null;
+    const x = a.wk ?? -1, y = b.wk ?? -1;
+    return x === y ? null : (x > y ? a : b);
+  }
+  function drawSit() {
+    drawSitSide("A", $("#sitA"), "Player 1");
+    drawSitSide("B", $("#sitB"), "Player 2");
+    const out = $("#sitResult"), a = sit.A, b = sit.B;
+    if (!a || !b) { out.replaceChildren(h("div", { class: "muted" }, "Pick two players to see who to start.")); return; }
+    if (a.wk == null && b.wk == null) { out.replaceChildren(h("div", { class: "big bad" }, "Neither player has a game this week")); return; }
+    const w = winner();
+    if (!w) { out.replaceChildren(h("div", { class: "big" }, "Toss-up"), h("div", { class: "sub" }, "Projections are identical. Go with the better matchup or your gut.")); return; }
+    const l = w === a ? b : a, gap = (w.wk ?? 0) - (l.wk ?? 0);
+    const conf = l.wk == null ? "no game for the other player" : gap >= 3 ? "clear edge" : gap >= 1.5 ? "moderate edge" : "slight edge";
+    const why = [];
+    if (l.wk == null) why.push(l.name + " is on bye or has no projection.");
+    else {
+      why.push(`Blended projection: ${fmt(w.wk)} vs ${fmt(l.wk)} pts (${fmt(gap)} pt gap).`);
+      const votes = ["wkRoto", "wkESPN", "wkFP", "wkFlock", "wkDS"].filter(k => w[k] != null && l[k] != null).map(k => w[k] > l[k]);
+      if (votes.length > 1 && votes.some(v => v) && votes.some(v => !v))
+        why.push(`The sources disagree (${votes.filter(v => v).length} of ${votes.length} favor ${w.name}), so treat this as closer than the gap suggests.`);
+    }
+    if (l.inj && !w.inj) why.push(`${l.name} is listed ${l.inj}.`);
+    if (w.inj) why.push(`Heads up: ${w.name} is listed ${w.inj}. Check his status before kickoff.`);
+    fill(out, h("div", { class: "big good" }, "Start " + w.name), h("div", { class: "sub" }, conf),
+      why.map(t => h("p", { class: "note" }, t)));
+  }
+  drawSit();
+
+  // ---------- suggested trades
+  // We don't know other teams' rosters, so suggestions are market-based: trades that are roughly fair in
+  // trade value (so a real manager could say yes) but that make YOUR starting lineup score more.
+  const RKEY = "ff-roster-v1", MIN_GAIN = 5, MAX_SUGGESTIONS = 6;
+  const LU = { ...((D.league && D.league.lineup) || { QB: 1, RB: 2, WR: 2, TE: 1, FLEX: 1, SUPERFLEX: 1 }) };   // updated by League settings
+  const weeksLeft = Math.max(D.lastWeek - D.week + 1, 1);
+  const roster = [], locked = new Set(), wants = [];
+  try {
+    const s = JSON.parse(localStorage.getItem(RKEY) || "{}");
+    (s.ids || []).forEach(id => { if (byId[id]) roster.push(byId[id]); });
+    (s.locked || []).forEach(id => { if (byId[id]) locked.add(id); });
+    (s.wants || []).forEach(id => { if (byId[id]) wants.push(byId[id]); });
+  } catch (e) { /* storage unavailable: the roster just won't be remembered */ }
+  const saveRoster = () => { try { localStorage.setItem(RKEY, JSON.stringify({ ids: roster.map(p => p.id), locked: [...locked], wants: wants.map(p => p.id) })); } catch (e) {} };
+
+  // Replacement-level ROS points per position: an empty lineup slot is filled by a waiver player, not by zero.
+  const REPL = {};
+  function refreshRepl() {
+    for (const pos of ["QB", "RB", "WR", "TE"]) {
+      const r = P.find(p => p.pos === pos && p.posRank === (D.replacementRank || {})[pos]);
+      REPL[pos] = r ? r.ros : 0;
+    }
+  }
+  refreshRepl();
+  const replFor = label => label === "SUPERFLEX" ? Math.max(...Object.values(REPL))
+    : label === "FLEX" ? Math.max(REPL.RB, REPL.WR, REPL.TE) : REPL[label.slice(0, 2)];
+  // Best starting lineup by rest-of-season points. Superflex is filled before FLEX so a QB can take it.
+  function bestLineup(players, key = "ros") {
+    const val = p => p[key] ?? 0;
+    const pool = players.slice().sort((a, b) => val(b) - val(a)), used = new Set(), slots = [];
+    const take = (label, ok) => { const p = pool.find(x => !used.has(x) && ok(x)); if (p) used.add(p); slots.push({ label, p: p || null }); };
+    for (const pos of ["QB", "RB", "WR", "TE"])
+      for (let i = 0; i < (LU[pos] || 0); i++) take(LU[pos] > 1 ? pos + (i + 1) : pos, x => x.pos === pos);
+    for (let i = 0; i < (LU.SUPERFLEX || 0); i++) take("SUPERFLEX", () => true);
+    for (let i = 0; i < (LU.FLEX || 0); i++) take("FLEX", x => x.pos !== "QB");
+    return { slots, used, total: slots.reduce((s, x) => s + (x.p ? val(x.p) : key === "ros" ? replFor(x.label) : 0), 0) };
+  }
+  let starterCount = Object.values(LU).reduce((a, b) => a + b, 0);
+  const pw = p => Math.pow(p.tradeValue, STAR_EXP);
+  const sumTV = list => list.reduce((s, p) => s + p.tradeValue, 0);
+  const OUT_FOR_SEASON = /^(IR|PUP|NFI|SUSP|INJURY_RESERVE|SUSPENSION)/i;
+
+  function findTrades() {
+    const base = bestLineup(roster);
+    const pool = P.filter(p => p.rank <= 120 && !roster.includes(p) && !OUT_FOR_SEASON.test(p.inj || ""));
+    const movable = roster.filter(p => !locked.has(p.id));
+    const found = [];
+    const consider = (give, get, kind) => {
+      const g = give.reduce((s, p) => s + pw(p), 0), t = get.reduce((s, p) => s + pw(p), 0);
+      if (g <= 0) return;
+      const ratio = t / g;
+      if (ratio > 1.05 || ratio < 0.85) return;              // must look fair to the other side
+      const nl = bestLineup(roster.filter(p => !give.includes(p)).concat(get));
+      if (get.some(p => !nl.used.has(p))) return;            // every incoming player must actually start
+      const gain = nl.total - base.total;
+      if (gain >= MIN_GAIN) found.push({ give, get, kind, gain, ratio, nl, score: gain - 2 * (give.length + get.length - 2) });
+    };
+    for (const a of movable) {
+      for (const t of pool) consider([a], [t], "Upgrade");
+      for (let i = 0; i < pool.length; i++) for (let j = i + 1; j < pool.length; j++) consider([a], [pool[i], pool[j]], "Depth");
+    }
+    for (let i = 0; i < movable.length; i++) for (let j = i + 1; j < movable.length; j++)
+      for (const t of pool) consider([movable[i], movable[j]], [t], "Consolidate");
+
+    found.sort((a, b) => b.score - a.score);
+    const picks = [], usedTargets = new Set(), giveUse = new Map();
+    for (const s of found) {
+      if (picks.length >= MAX_SUGGESTIONS) break;
+      if (s.get.some(p => usedTargets.has(p)) || s.give.some(p => (giveUse.get(p) || 0) >= 2)) continue;
+      picks.push(s);
+      s.get.forEach(p => usedTargets.add(p));
+      s.give.forEach(p => giveUse.set(p, (giveUse.get(p) || 0) + 1));
+    }
+    return { base, picks };
+  }
+
+  function explain(s, base) {
+    const out = [], nl = s.nl, nm = p => p.name;
+    const gained = [...nl.used].filter(p => !base.used.has(p));
+    const lost = [...base.used].filter(p => !nl.used.has(p));
+    const weakest = [...base.used].sort((a, b) => a.ros - b.ros)[0];
+    gained.forEach(p => {
+      const slot = nl.slots.find(x => x.p === p).label;
+      out.push(`${nm(p)} (${p.pos}${p.posRank}, ${fmt(p.ros, 0)} ROS pts) enters your lineup at ${slot}.`);
+    });
+    const givenStarters = s.give.filter(p => base.used.has(p));
+    lost.filter(p => !s.give.includes(p)).forEach(p => out.push(`${nm(p)} (${fmt(p.ros, 0)} ROS pts) moves to your bench.`));
+    if (!givenStarters.length) out.push(`${s.give.map(nm).join(" and ")} ${s.give.length > 1 ? "are" : "is"} on your bench, so you give up no starting points.`);
+    else out.push(s.gain >= 0 ? `You give up ${givenStarters.map(nm).join(" and ")} from your starting lineup, but the incoming players more than make up for it.`
+      : `You give up ${givenStarters.map(nm).join(" and ")} from your starting lineup, and the incoming player does not fully replace them.`);
+    if (lost.includes(weakest)) out.push(`This fixes your weakest starter, ${nm(weakest)} (${fmt(weakest.ros, 0)} ROS pts).`);
+    out.push(`Projected lineup total: ${fmt(base.total, 0)} to ${fmt(nl.total, 0)} ROS pts (about ${fmt(Math.abs(s.gain) / weeksLeft, 1)} ${s.gain >= 0 ? "more" : "fewer"} per week).`);
+    if (s.kind === "Target" && s.gain < 0) out.push("This weakens your starting lineup, so it only makes sense if you value the target beyond his rest-of-season projection.");
+
+    const pct = Math.round(s.ratio * 100);
+    if (s.ratio < 0.85) out.push(`This would be an overpay: you get back only ${pct}% of the trade value you send. Give less, or ask for a throw-in.`);
+    else if (s.ratio > 1.05 && s.near) out.push(`You are asking for more than you send (${pct}% of its trade value), so you would need to add a sweetener.`);
+    else if (s.ratio >= 0.95 && s.ratio <= 1.0) out.push(`Fair to both sides: you get back ${pct}% of the trade value you send (stars weighted extra), so the other manager gives up almost nothing.`);
+    else if (s.ratio < 0.95) out.push(`You pay a small premium: you get back ${pct}% of the trade value you send, which should make this an easy sell.`);
+    else out.push(`You're asking for slightly more than you send (${pct}% of its trade value), so expect some pushback.`);
+    if ([...s.give, ...s.get].some(p => p.pos === "QB") && D.league && D.league.qbTradePremium > 1)
+      out.push(`Superflex note: QBs carry a ${Math.round((D.league.qbTradePremium - 1) * 100)}% premium in trade value, and that is already counted.`);
+    if (s.get.length > s.give.length) out.push("You receive more players than you send, so you will need an open bench spot or a player to drop.");
+    if (s.give.length > s.get.length) out.push(`Sending ${s.give.length} players for ${s.get.length} frees ${s.give.length - s.get.length} roster spot${s.give.length - s.get.length > 1 ? "s" : ""} you can fill from waivers.`);
+
+    s.get.forEach(p => {
+      if (p.inj) out.push(`Risk: ${nm(p)} is listed ${p.inj}.`);
+      if (p.bye && Number(p.bye) >= D.week) out.push(Number(p.bye) === D.week ? `${nm(p)} is on bye this week.` : `${nm(p)} has a bye in week ${p.bye}.`);
+      const v = [p.rosRoto, p.rosESPN, p.rosFP, p.rosFlock, p.rosCalc, p.rosDS].filter(x => x != null);
+      if (v.length >= 3) {
+        const lo = Math.min(...v), hi = Math.max(...v), mean = v.reduce((a, b) => a + b, 0) / v.length;
+        out.push((hi - lo) / mean > 0.2
+          ? `Risk: the sources disagree on ${nm(p)} (${fmt(lo, 0)} to ${fmt(hi, 0)} ROS pts).`
+          : `${v.length} sources agree on ${nm(p)} (${fmt(lo, 0)} to ${fmt(hi, 0)} ROS pts).`);
+      }
+    });
+    return out;
+  }
+
+  const playerLine = p => h("div", { class: "pl" }, avatar(p), posTag(p), p.name, h("span", { class: "team" }, p.team),
+    p.inj ? h("span", { class: "inj" }, p.inj) : null);
+
+  function drawRoster() { ["#rosterCard", "#wwRosterCard"].forEach(drawRosterInto); }
+  function drawRosterInto(sel) {
+    const card = $(sel), base = bestLineup(roster);
+    const role = p => { const s = base.slots.find(x => x.p === p); return s ? h("b", {}, s.label) : "Bench"; };
+    fill(card, h("h2", {}, "Your roster"), h("p", { class: "note", style: "margin:-4px 0 10px" }, "Shared with the Suggested trades and Waiver wire tabs."),
+      picker(p => { if (!roster.includes(p)) { roster.push(p); if (wants.includes(p)) wants.splice(wants.indexOf(p), 1); changed(); } }, "Add a player to your roster…"),
+      roster.length
+        ? roster.slice().sort((a, b) => b.ros - a.ros).map(p => h("div", { class: "picked" }, avatar(p), posTag(p), p.name,
+            h("span", { class: "team" }, p.team),
+            h("span", { class: "role" }, role(p), h("br"), fmt(p.ros, 0) + " ROS pts"),
+            h("button", { class: "chip lock", "aria-pressed": locked.has(p.id), title: "Never include this player in a suggested trade",
+              onclick: () => { locked.has(p.id) ? locked.delete(p.id) : locked.add(p.id); changed(); } }, locked.has(p.id) ? "Kept" : "Keep"),
+            h("button", { class: "x", "aria-label": "Remove " + p.name, onclick: () => { roster.splice(roster.indexOf(p), 1); locked.delete(p.id); changed(); } }, "×")))
+        : h("div", { class: "empty" }, "Add every player on your team, starters and bench. Use Keep on anyone you would never trade."),
+      roster.length ? h("div", { class: "total" }, h("span", {}, "Projected lineup total"), h("span", { class: "num" }, fmt(base.total, 0) + " ROS pts")) : null,
+      roster.length ? h("button", { class: "chip", style: "margin-top:12px", onclick: () => { roster.length = 0; locked.clear(); changed(); } }, "Clear roster") : null);
+  }
+
+  // Packages from YOUR roster that are fair for each player the user wants. Unlike findTrades(), the lineup effect
+  // may be negative: the user chose the target, so we report the cost honestly instead of hiding the trade.
+  function findWantTrades(base) {
+    const movable = roster.filter(p => !locked.has(p.id) && pw(p) > 0);   // zero-value players add nothing to a package
+    const combos = movable.map(p => [p]);
+    for (let i = 0; i < movable.length; i++) for (let j = i + 1; j < movable.length; j++) combos.push([movable[i], movable[j]]);
+    if (movable.length <= 24)
+      for (let i = 0; i < movable.length; i++) for (let j = i + 1; j < movable.length; j++) for (let k = j + 1; k < movable.length; k++)
+        combos.push([movable[i], movable[j], movable[k]]);
+    combos.forEach(c => { c.g = c.reduce((s, p) => s + pw(p), 0); });
+    const evalTrade = (give, t, ratio, near) => {
+      const nl = bestLineup(roster.filter(p => !give.includes(p)).concat(t));
+      return { give, get: [t], kind: "Target", gain: nl.total - base.total, ratio, nl, near };
+    };
+    return wants.filter(t => !roster.includes(t)).map(t => {
+      const tv = pw(t), fair = [], near = [];
+      for (const c of combos) {
+        const ratio = tv / c.g;
+        if (ratio >= 0.85 && ratio <= 1.05) fair.push(evalTrade(c, t, ratio, false));
+        else if (ratio >= 0.6 && ratio <= 1.4) near.push({ c, ratio, dist: Math.abs(ratio - 0.95) });
+      }
+      fair.forEach(s => { s.score = s.gain - 3 * (s.give.length - 1); });
+      fair.sort((a, b) => b.score - a.score);
+      const offers = [], used = new Set();
+      for (const s of fair) {                                   // up to 3 offers that don't reuse the same players
+        if (offers.length >= 3) break;
+        if (s.give.some(p => used.has(p))) continue;
+        offers.push(s); s.give.forEach(p => used.add(p));
+      }
+      if (!offers.length && near.length) {
+        near.sort((a, b) => a.dist - b.dist);
+        offers.push(evalTrade(near[0].c, t, near[0].ratio, true));
+      }
+      return { target: t, offers, movable: movable.length };
+    });
+  }
+
+  function tradeCard(s, base) {
+    const badge = s.kind === "Target" ? (s.near ? "Closest match" : "Fair offer") : s.kind;
+    return h("div", { class: "card sug" },
+      h("div", { class: "sug-head" }, h("span", { class: "badge" }, badge),
+        h("span", { class: "gain " + (s.gain >= 0 ? "good" : "bad") }, `${s.gain >= 0 ? "+" : "-"}${fmt(Math.abs(s.gain), 0)} ROS pts`),
+        h("span", { class: "muted" }, `${s.give.length}-for-${s.get.length}`)),
+      h("div", { class: "two" },
+        h("div", {}, h("div", { class: "lbl" }, "You give"), s.give.map(playerLine)),
+        h("div", {}, h("div", { class: "lbl" }, "You get"), s.get.map(playerLine))),
+      h("div", { class: "lbl" }, "Why this works"),
+      h("ul", {}, explain(s, base).map(t => h("li", {}, t))));
+  }
+
+  function drawWants() {
+    fill($("#wantCard"), h("h2", {}, "Players you want"),
+      h("p", { class: "note", style: "margin:-4px 0 10px" }, "Optional. List players you would like to acquire and the Suggested trades will find fair packages from your roster for each one."),
+      picker(p => { if (!wants.includes(p) && !roster.includes(p)) { wants.push(p); changed(); } }, "Add a player you want…"),
+      wants.length
+        ? wants.map(p => h("div", { class: "picked" }, avatar(p), posTag(p), p.name, h("span", { class: "team" }, p.team),
+            p.inj ? h("span", { class: "inj" }, p.inj) : null,
+            h("span", { class: "v" }, fmt(p.ros, 0) + " ROS pts", h("br"), h("span", { class: "muted" }, fmt(p.tradeValue, 0) + " trade value")),
+            h("button", { class: "x", "aria-label": "Remove " + p.name, onclick: () => { wants.splice(wants.indexOf(p), 1); changed(); } }, "×")))
+        : h("div", { class: "empty" }, "No players added."));
+  }
+
+  function drawSuggestions() {
+    const box = $("#sugResults");
+    if (roster.length < starterCount) {
+      fill(box, h("div", { class: "card" }, h("div", { class: "muted" },
+        `Add at least ${starterCount} players (your full starting lineup) to see suggested trades. You have ${roster.length}.`)));
+      return;
+    }
+    const base = bestLineup(roster), cards = [];
+    if (wants.length) {
+      cards.push(h("h2", { style: "margin:0 0 10px" }, "Trades for players you want"));
+      findWantTrades(base).forEach(r => {
+        if (!r.offers.length) cards.push(h("div", { class: "card sug" }, h("div", { class: "big" }, "No fair package for " + r.target.name),
+          h("p", { class: "note" }, r.movable ? `${r.target.name} (${fmt(r.target.tradeValue, 0)} trade value) is too far from anything your roster can offer. You would need to add a bigger piece or ask a third team.`
+            : "Everyone on your roster is marked Keep or has no trade value, so there is nothing to offer.")));
+        r.offers.forEach(s => cards.push(tradeCard(s, base)));
+      });
+      cards.push(h("h2", { style: "margin:18px 0 10px" }, "Other ideas based on your lineup"));
+    }
+    const { picks } = findTrades();
+    if (!picks.length) {
+      cards.push(h("div", { class: "card" }, h("div", { class: "big" }, "No clear upgrades found"),
+        h("p", { class: "note" }, "Nothing roughly fair in value improves your lineup by enough. Your starters may already be strong, or too many players are marked Keep.")));
+    } else {
+      cards.push(h("p", { class: "note", style: "margin:0 0 10px" },
+        "Suggestions are based on player value, not other teams' rosters. Look for a manager who needs the position you are sending and owns the player you want."));
+      picks.forEach(s => cards.push(tradeCard(s, base)));
+    }
+    fill(box, cards);
+  }
+
+  // ---------- waiver wire
+  // "Waiver wire" = owned in fewer than 50% of ESPN leagues (available in more than half of them).
+  // QBs are more valuable in superflex, so they get a stricter cutoff: only QBs owned in under 25% qualify.
+  const WAIVER_MAX_OWNED = { QB: 25, RB: 50, WR: 50, TE: 50 }, MIN_PICKUP_GAIN = 3, MIN_BENCH_GAIN = 10, MAX_PICKUPS = 6, BEST_AVAILABLE = 15;
+  let wwPos = "ALL";
+  const waiverPool = () => P.filter(p => !p.deep && p.own != null && p.own < WAIVER_MAX_OWNED[p.pos] && !OUT_FOR_SEASON.test(p.inj || ""));
+
+  function findPickups() {
+    const base = bestLineup(roster), baseWk = bestLineup(roster, "wk");
+    const cands = waiverPool().filter(p => !roster.includes(p));
+    const droppable = roster.filter(p => !locked.has(p.id));
+    const lineup = [], bench = [];
+    for (const c of cands) {
+      let bestL = null, bestB = null;
+      for (const d of droppable) {
+        const newRoster = roster.filter(p => p !== d).concat(c);
+        const nl = bestLineup(newRoster), gain = nl.total - base.total;
+        if (gain >= MIN_PICKUP_GAIN && nl.used.has(c)) {
+          if (!bestL || gain > bestL.gain + 0.01 || (Math.abs(gain - bestL.gain) <= 0.01 && d.ros < bestL.d.ros)) bestL = { c, d, nl, gain, newRoster };
+        } else if (!base.used.has(d) && d.pos === c.pos && c.ros - d.ros >= MIN_BENCH_GAIN && (!bestB || d.ros < bestB.d.ros)) {
+          bestB = { c, d, nl, gain, newRoster };
+        }
+      }
+      if (bestL) lineup.push({ ...bestL, kind: "Lineup upgrade", weekGain: bestLineup(bestL.newRoster, "wk").total - baseWk.total });
+      else if (bestB) bench.push({ ...bestB, kind: "Bench upgrade", weekGain: bestLineup(bestB.newRoster, "wk").total - baseWk.total });
+    }
+    lineup.sort((a, b) => b.gain - a.gain);
+    bench.sort((a, b) => (b.c.ros - b.d.ros) - (a.c.ros - a.d.ros));
+    const picks = [], usedDrop = new Set();
+    for (const s of lineup.concat(bench)) {
+      if (picks.length >= MAX_PICKUPS) break;
+      if (usedDrop.has(s.d)) continue;       // never suggest dropping the same player for two pickups
+      usedDrop.add(s.d); picks.push(s);
+    }
+    return { base, picks };
+  }
+
+  function explainPickup(s, base) {
+    const { c, d, nl } = s, out = [];
+    out.push(`${c.name} (${c.pos}${c.posRank}, ${fmt(c.ros, 0)} ROS pts) is available in ${fmt(100 - c.own, 0)}% of ESPN leagues (${fmt(c.own, 0)}% owned).`);
+    if (s.kind === "Lineup upgrade") {
+      const slot = nl.slots.find(x => x.p === c).label;
+      out.push(`He would start for you at ${slot}.`);
+      [...base.used].filter(p => !nl.used.has(p) && p !== d).forEach(p => out.push(`${p.name} (${fmt(p.ros, 0)} ROS pts) moves to your bench.`));
+      out.push(`Projected lineup total: ${fmt(base.total, 0)} to ${fmt(nl.total, 0)} ROS pts (about ${fmt(s.gain / weeksLeft, 1)} more per week).`);
+    } else {
+      out.push(`He is not a starter for you yet, but projects ${fmt(c.ros - d.ros, 0)} ROS pts more than ${d.name}, a ${d.pos} who sits on your bench and is not helping you. He is a better stash for injuries and bye weeks.`);
+    }
+    out.push(base.used.has(d)
+      ? `Drop ${d.name} (${d.pos}${d.posRank}, ${fmt(d.ros, 0)} ROS pts); he is a starter, but the lineup still improves without him.`
+      : `Drop ${d.name} (${d.pos}${d.posRank}, ${fmt(d.ros, 0)} ROS pts), your least useful bench player for this move.`);
+    if (d.inj) out.push(`${d.name} is listed ${d.inj}, which makes him easier to move on from.`);
+    if (c.wk == null) out.push(`${c.name} is on bye or has no projection in week ${D.week}, so he will not help until next week.`);
+    else if (s.weekGain >= 1) out.push(`Helps right away: about +${fmt(s.weekGain, 1)} projected points in week ${D.week} (${fmt(c.wk)} for ${c.name}).`);
+    else out.push(`Week ${D.week}: ${fmt(c.wk)} projected points, not enough to beat your current starters yet.`);
+    if (c.ownChange >= 1.5) out.push(`Trending up: his ownership rose ${fmt(c.ownChange, 1)} points recently, so other managers may claim him soon.`);
+    else if (c.ownChange <= -1.5) out.push(`Trending down: his ownership fell ${fmt(-c.ownChange, 1)} points recently.`);
+    if (c.inj) out.push(`Risk: ${c.name} is listed ${c.inj}.`);
+    if (c.bye && Number(c.bye) > D.week) out.push(`${c.name} has a bye in week ${c.bye}.`);
+    const v = [c.rosRoto, c.rosESPN, c.rosFP, c.rosFlock, c.rosCalc, c.rosDS].filter(x => x != null);
+    if (v.length >= 3) {
+      const lo = Math.min(...v), hi = Math.max(...v), mean = v.reduce((a, b) => a + b, 0) / v.length;
+      out.push((hi - lo) / mean > 0.2 ? `Risk: the sources disagree on ${c.name} (${fmt(lo, 0)} to ${fmt(hi, 0)} ROS pts).`
+        : `${v.length} sources agree on ${c.name} (${fmt(lo, 0)} to ${fmt(hi, 0)} ROS pts).`);
+    } else if (v.length) out.push(`Only ${v.length} source${v.length > 1 ? "s" : ""} project ${c.name}, so treat the number as rough.`);
+    return out;
+  }
+
+  const ownLine = p => h("div", { class: "pl" }, avatar(p), posTag(p), p.name, h("span", { class: "team" }, p.team),
+    h("span", { class: "muted", style: "margin-left:auto;font-size:12px" }, `${fmt(p.own, 0)}% owned`));
+
+  function drawWaivers() {
+    const box = $("#wwResults"), cards = [];
+    if (roster.length < starterCount) {
+      cards.push(h("div", { class: "card", style: "margin-bottom:14px" }, h("div", { class: "muted" },
+        `Add at least ${starterCount} players (your full starting lineup) to get pickup and drop suggestions. You have ${roster.length}. The best available players are listed below.`)));
+    } else {
+      const { base, picks } = findPickups();
+      if (!picks.length) cards.push(h("div", { class: "card", style: "margin-bottom:14px" }, h("div", { class: "big" }, "No clear pickups"),
+        h("p", { class: "note" }, "No available player improves your lineup or beats your worst bench players by enough. Check back after the next waiver run.")));
+      picks.forEach(s => cards.push(h("div", { class: "card sug" },
+        h("div", { class: "sug-head" }, h("span", { class: "badge" }, s.kind),
+          h("span", { class: "gain good" }, s.kind === "Lineup upgrade" ? `+${fmt(s.gain, 0)} ROS pts` : `+${fmt(s.c.ros - s.d.ros, 0)} ROS pts on the bench`)),
+        h("div", { class: "two" },
+          h("div", {}, h("div", { class: "lbl" }, "Add from waivers"), ownLine(s.c)),
+          h("div", {}, h("div", { class: "lbl" }, "Drop"), playerLine(s.d))),
+        h("div", { class: "lbl" }, "Why this works"),
+        h("ul", {}, explainPickup(s, base).map(t => h("li", {}, t))))));
+    }
+    const avail = waiverPool().filter(p => !roster.includes(p) && (wwPos === "ALL" || p.pos === wwPos))
+      .sort((a, b) => b.vor - a.vor).slice(0, BEST_AVAILABLE);   // value over replacement, so QBs' bigger raw totals don't dominate
+    cards.push(h("div", { class: "card" }, h("h2", {}, "Best available on waivers"),
+      h("p", { class: "note", style: "margin:-4px 0 10px" }, `Owned in under ${WAIVER_MAX_OWNED.RB}% of ESPN leagues (under ${WAIVER_MAX_OWNED.QB}% for QBs, since they are more valuable in superflex).`),
+      h("div", { class: "row" }, ["ALL", "QB", "RB", "WR", "TE"].map(pos => h("button", { class: "chip", "aria-pressed": pos === wwPos,
+        onclick: () => { wwPos = pos; drawWaivers(); } }, pos))),
+      avail.length ? avail.map(p => h("div", { class: "picked" }, avatar(p), posTag(p), p.name, h("span", { class: "team" }, p.team),
+        p.inj ? h("span", { class: "inj" }, p.inj) : null,
+        h("span", { class: "v" }, `${fmt(p.ros, 0)} ROS pts · ${p.wk == null ? "bye" : "wk " + fmt(p.wk, 1)}`, h("br"),
+          h("span", { class: "muted" }, `${fmt(p.own, 0)}% owned` + (Math.abs(p.ownChange || 0) >= 1.5 ? (p.ownChange > 0 ? " ▲" : " ▼") : "")))))
+        : h("div", { class: "empty" }, "No available players found for this position.")));
+    fill(box, cards);
+  }
+  function changed() { saveRoster(); drawRoster(); drawWants(); drawSuggestions(); drawWaivers(); }
+  drawRoster(); drawWants(); drawSuggestions(); drawWaivers();
+
+  // ---------- league settings
+  // The updater ships raw projected stat lines and each source's ranks. Everything here re-scores them with the
+  // user's league settings in the browser, rebuilds the blended rankings and values, and redraws every tab.
+  const SKEY = "ff-settings-v1";
+  const POS4 = ["QB", "RB", "WR", "TE"];
+  const LINEUP_KEYS = ["QB", "RB", "WR", "TE", "FLEX", "SUPERFLEX"];
+  const STAT_KEYS = D.statKeys || Object.keys(D.scoring).filter(k => k !== "te_rec_bonus");
+  const FS = D.flexSplit || { FLEX: { RB: 0.45, WR: 0.45, TE: 0.10 }, SUPERFLEX: { QB: 0.85, RB: 0.07, WR: 0.07, TE: 0.01 } };
+  const clone = o => JSON.parse(JSON.stringify(o));
+  const DEF = { teams: D.league.teams, lineup: clone(D.league.lineup), scoring: clone(D.scoring), qbPremium: D.league.qbTradePremium };
+  LINEUP_KEYS.forEach(k => { DEF.lineup[k] = DEF.lineup[k] || 0; });
+  DEF.scoring.te_rec_bonus = DEF.scoring.te_rec_bonus || 0;
+  const S = clone(DEF);
+  let storageOk = true;
+  const HAS_RAW = P.some(p => p.sr || p.se);   // older data files have no raw stat lines, so settings can't re-score them
+  const numOr = (v, d) => (typeof v === "number" && isFinite(v)) ? v : d;
+  try {
+    const saved = JSON.parse(localStorage.getItem(SKEY) || "null");
+    if (saved && saved.settings) {
+      const s = saved.settings;
+      S.teams = Math.max(2, Math.round(numOr(s.teams, DEF.teams)));
+      LINEUP_KEYS.forEach(k => { S.lineup[k] = Math.max(0, Math.round(numOr((s.lineup || {})[k], DEF.lineup[k]))); });
+      Object.keys(S.scoring).forEach(k => { S.scoring[k] = numOr((s.scoring || {})[k], DEF.scoring[k]); });
+      S.qbPremium = Math.max(1, numOr(s.qbPremium, DEF.qbPremium));
+    }
+  } catch (e) { storageOk = false; }
+
+  function saveSettings() {
+    try {
+      if (JSON.stringify(S) === JSON.stringify(DEF)) localStorage.removeItem(SKEY);   // untouched defaults need no saving
+      else localStorage.setItem(SKEY, JSON.stringify({ v: 1, settings: S }));
+      storageOk = true;
+    } catch (e) { storageOk = false; }
+  }
+
+  // How many players at each position a league of this shape needs (starters plus flex shares), plus one.
+  function replRanks(cfg = S) {
+    const R = {};
+    for (const pos of POS4) {
+      const starters = (cfg.lineup[pos] || 0) + ["FLEX", "SUPERFLEX"].reduce((a, f) => a + (cfg.lineup[f] || 0) * ((FS[f] || {})[pos] || 0), 0);
+      R[pos] = Math.max(1, Math.round(starters * cfg.teams + (D.benchBuffer == null ? 1 : D.benchBuffer)));
+    }
+    return R;
+  }
+  const r1 = x => Math.round(x * 10) / 10, r2 = x => Math.round(x * 100) / 100;
+  const meanOf = a => { const v = a.filter(x => x != null); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null; };
+  function curvePts(rank, curve) {       // map a (fractional) 1-based rank onto a descending points curve
+    if (!curve.length) return 0;
+    const x = Math.max(rank - 1, 0), lo = Math.floor(x);
+    if (lo >= curve.length - 1) return curve[curve.length - 1];
+    const f = x - lo;
+    return curve[lo] * (1 - f) + curve[lo + 1] * f;
+  }
+
+  function recompute() {
+    if (!HAS_RAW) return;
+    const sc = S.scoring, R = replRanks();
+    const pts = (st, pos) => {
+      let t = 0;
+      for (const k of STAT_KEYS) if (st[k]) t += st[k] * (sc[k] || 0);
+      if (pos === "TE" && st.rec) t += st.rec * (sc.te_rec_bonus || 0);
+      return t;
+    };
+    const pos0 = v => (v != null && v > 0) ? v : null;
+    for (const p of P) {                                   // 1. score each projection source's stat lines
+      p._roto = p.sr ? pos0(pts(p.sr, p.pos)) : null;
+      p._espn = p.se ? pos0(pts(p.se, p.pos)) : null;
+      p._rotoWk = p.sw ? pos0(pts(p.sw, p.pos)) : null;
+      p._espnWk = p.ew ? pos0(pts(p.ew, p.pos)) : null;
+      p._stat = meanOf([p._roto, p._espn]);
+      p._statWk = meanOf([p._rotoWk, p._espnWk]);
+    }
+    const rosCurve = {}, wkCurve = {};                     // 2. points curves per position (rank -> points)
+    for (const pos of POS4) {
+      rosCurve[pos] = P.filter(p => p.pos === pos && p._stat != null).map(p => p._stat).sort((a, b) => b - a);
+      wkCurve[pos] = P.filter(p => p.pos === pos && p._statWk != null).map(p => p._statWk).sort((a, b) => b - a);
+    }
+    for (const p of P) {                                   // 3. blend every source, including rank-only ones
+      const c = rosCurve[p.pos], w = wkCurve[p.pos];
+      const viaRank = (rank, curve) => rank != null ? curvePts(rank, curve) : null;
+      const fp = viaRank(p.fpRosRank, c), fk = viaRank(p.flockRosRank, c), fc = viaRank(p.calcRosRank, c), fd = viaRank(p.dsRosRank, c);
+      const best = Math.min(999, ...[p.fpRosRank, p.flockRosRank, p.calcRosRank, p.dsRosRank].filter(x => x != null));
+      p.deep = p._roto == null && p._espn == null && best > R[p.pos] + 10;
+      const ros = meanOf([p._roto, p._espn, fp, fk, fc, fd]);
+      p.ros = ros == null ? 0 : r1(ros);
+      p.rosRoto = p._roto == null ? null : r1(p._roto);
+      p.rosESPN = p._espn == null ? null : r1(p._espn);
+      p.rosFP = fp == null ? null : r1(fp); p.rosFlock = fk == null ? null : r1(fk);
+      p.rosCalc = fc == null ? null : r1(fc); p.rosDS = fd == null ? null : r1(fd);
+      const wf = viaRank(p.fpWkRank, w), wk = viaRank(p.flockWkRank, w), wd = viaRank(p.dsWkRank, w);
+      const wkAll = meanOf([p._rotoWk, p._espnWk, wf, wk, wd]);
+      p.wk = wkAll == null ? null : r1(wkAll);
+      p.wkRoto = p._rotoWk == null ? null : r2(p._rotoWk);
+      p.wkESPN = p._espnWk == null ? null : r2(p._espnWk);
+      p.wkFP = wf == null ? null : r1(wf); p.wkFlock = wk == null ? null : r1(wk); p.wkDS = wd == null ? null : r1(wd);
+    }
+    for (const pos of POS4) {                              // 4. value over replacement level, per position
+      const pool = P.filter(p => p.pos === pos).sort((a, b) => (a.deep - b.deep) || (b.ros - a.ros));
+      const core = pool.filter(p => !p.deep);
+      const repl = core.length ? core[Math.min(R[pos], core.length) - 1].ros : 0;
+      pool.forEach((p, i) => {
+        p.posRank = i + 1;
+        p.vor = r1(p.ros - repl);
+        p.value = r1(Math.max(p.ros - repl, 0));
+        p.tradeValue = r1(p.value * (pos === "QB" ? S.qbPremium : 1));
+      });
+    }
+    P.sort((a, b) => (a.deep - b.deep) || (b.value - a.value) || (b.ros - a.ros));
+    P.forEach((p, i) => { p.rank = i + 1; });
+    D.replacementRank = R;                                 // 5. keep the rest of the page in sync
+    D.league.teams = S.teams; D.league.qbTradePremium = S.qbPremium;
+    Object.assign(LU, S.lineup);
+    starterCount = Object.values(LU).reduce((a, b) => a + b, 0);
+    refreshRepl();
+  }
+
+  function describeSettings() {
+    const L = S.lineup, sc = S.scoring, parts = [];
+    const lineup = LINEUP_KEYS.filter(k => L[k] > 0).map(k => `${L[k]} ${k === "SUPERFLEX" ? "SF" : k}`).join(", ");
+    parts.push(`${S.teams}-team`, lineup || "no starters");
+    let scoring = `${sc.rec} PPR`;
+    if (sc.te_rec_bonus) scoring += ` (+${sc.te_rec_bonus} TE)`;
+    if (sc.rush_fd || sc.rec_fd || sc.pass_fd) scoring += sc.rush_fd === sc.rec_fd && !sc.pass_fd ? `, ${sc.rush_fd}/first down` : ", first-down bonuses";
+    if (sc.pass_td !== 4) scoring += `, ${sc.pass_td}-pt pass TD`;
+    parts.push(scoring);
+    return parts.join(" · ");
+  }
+  const drawMeta = () => { $("#meta").textContent = `Week ${D.week} · ${D.season} · updated ${D.updated} · ${describeSettings()}`; };
+
+  function applySettings() {
+    recompute(); drawMeta(); drawRankNote(); drawRank(); drawTrade(); drawSit(); changed(); drawSettingsSummary();
+  }
+  // The form edits a DRAFT. Nothing is recalculated or saved until the user clicks "Save settings".
+  let draft = clone(S), savedMsg = "";
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const isDirty = () => !same(draft, S);
+  const startersIn = cfg => LINEUP_KEYS.reduce((a, k) => a + (cfg.lineup[k] || 0), 0);
+
+  function saveDraft() {
+    if (startersIn(draft) < 1) return;
+    S.teams = draft.teams; S.lineup = clone(draft.lineup); S.scoring = clone(draft.scoring); S.qbPremium = draft.qbPremium;
+    saveSettings();            // remember them for the next visit
+    applySettings();           // recalculate the rankings and redraw every tab
+    refreshDraftUI("Settings saved. The rankings and every other tab now use them.");
+  }
+  function discardDraft() { draft = clone(S); savedMsg = ""; drawSettings(); }
+  function resetDraft() { draft = clone(DEF); savedMsg = ""; drawSettings(); }   // loads the defaults into the form; Save applies them
+
+  const SCORING_GROUPS = [
+    ["Passing", [["pass_yd", "Per passing yard", 0.01], ["pass_td", "Passing touchdown", 1], ["pass_int", "Interception", 1], ["pass_2pt", "2-point conversion pass", 1],
+      ["pass_cmp", "Per completion", 0.1], ["pass_inc", "Per incompletion", 0.1], ["pass_sack", "Per sack taken", 0.5], ["pass_fd", "Per passing first down", 0.5]]],
+    ["Rushing", [["rush_att", "Per carry", 0.1], ["rush_yd", "Per rushing yard", 0.01], ["rush_td", "Rushing touchdown", 1], ["rush_2pt", "2-point conversion run", 1], ["rush_fd", "Per rushing first down", 0.5]]],
+    ["Receiving", [["rec", "Per reception", 0.5], ["te_rec_bonus", "Extra per reception for TEs", 0.5], ["rec_tgt", "Per target", 0.1], ["rec_yd", "Per receiving yard", 0.01],
+      ["rec_td", "Receiving touchdown", 1], ["rec_2pt", "2-point conversion catch", 1], ["rec_fd", "Per receiving first down", 0.5]]],
+    ["Other", [["fum_lost", "Fumble lost", 1]]],
+  ];
+  const LINEUP_LABELS = { QB: "QB", RB: "RB", WR: "WR", TE: "TE", FLEX: "FLEX (RB/WR/TE)", SUPERFLEX: "SUPERFLEX (QB/RB/WR/TE)" };
+
+  function numField(label, value, attrs, onValue) {
+    const input = h("input", { type: "number", step: "any", value: String(value), ...attrs });
+    input.addEventListener("input", () => { const v = parseFloat(input.value); onValue(isFinite(v) ? v : 0); refreshDraftUI(); });
+    return h("label", { class: "fld" }, h("span", {}, label), input);
+  }
+
+  function drawSettingsStatus() {
+    const el = $("#setStatus");
+    if (!el) return;
+    const noStarters = startersIn(draft) < 1, dirty = isDirty();
+    el.textContent = noStarters ? "Start at least one player before saving."
+      : dirty ? "You have unsaved changes. Click Save settings to update the rankings and every other tab."
+      : savedMsg || (storageOk ? "These settings are saved in this browser and stay until you change them."
+        : "This browser is blocking storage, so these settings will be forgotten when you close the page.");
+    el.className = "note" + (noStarters || (!dirty && !storageOk) ? " bad" : dirty ? " warnnote" : "");
+  }
+  function drawSettingsSummary() {
+    const el = $("#setSummary");
+    if (!el) return;
+    const R = D.replacementRank, n = starterCount;
+    const lines = [
+      h("div", {}, "Saved settings: you start ", h("b", {}, n + " players"), " per team, so about ", h("b", {}, String(n * S.teams)), " starters league-wide."),
+      h("div", {}, "Replacement level (the player you could pick up instead): ", h("b", {}, `QB${R.QB}, RB${R.RB}, WR${R.WR}, TE${R.TE}`), ".")];
+    if (isDirty() && startersIn(draft) >= 1) {
+      const p = replRanks(draft);
+      lines.push(h("div", { style: "color:var(--warn)" }, "With your unsaved changes: ", h("b", {}, `${startersIn(draft)} starters per team, replacement level QB${p.QB}, RB${p.RB}, WR${p.WR}, TE${p.TE}`), "."));
+    }
+    lines.push(h("div", {}, "Rankings, values, trades, start/sit and waiver suggestions all use the saved settings."));
+    fill(el, lines);
+  }
+  // Keeps the Save bar, the tab label and the summary in step with the draft (without redrawing the inputs).
+  function refreshDraftUI(msg) {
+    if (msg !== undefined) savedMsg = msg; else if (isDirty()) savedMsg = "";
+    const dirty = isDirty(), ok = startersIn(draft) >= 1;
+    const save = $("#setSave"), discard = $("#setDiscard"), tab = $('nav button[data-tab="settings"]');
+    if (save) save.disabled = !dirty || !ok;
+    if (discard) discard.disabled = !dirty;
+    if (tab) tab.textContent = "⚙ League settings" + (dirty ? " •" : "");
+    drawSettingsStatus(); drawSettingsSummary();
+  }
+
+  function drawSettings() {
+    if (!HAS_RAW) {
+      fill($("#tab-settings"), h("div", { class: "card" }, h("div", { class: "big bad" }, "The data file needs an update"),
+        h("p", { class: "note" }, "League settings need the newer data format. Run update.bat (or wait for the 9 AM daily update), then reload this page.")));
+      return;
+    }
+    const L = draft.lineup, sc = draft.scoring;
+    const chip = (label, fn) => h("button", { class: "chip", style: "margin:0 6px 6px 0", onclick: fn }, label);
+    const setRec = v => { sc.rec = v; drawSettings(); };
+    fill($("#tab-settings"),
+      h("div", { class: "card savebar" },
+        h("button", { class: "btn-primary", id: "setSave", onclick: saveDraft }, "Save settings"),
+        h("button", { class: "chip", id: "setDiscard", onclick: discardDraft }, "Discard changes"),
+        h("button", { class: "chip", onclick: resetDraft }, "Reset to my league defaults"),
+        h("span", { id: "setStatus", class: "note", style: "margin:0" })),
+      h("div", { class: "two" },
+        h("div", {},
+          h("div", { class: "card" }, h("h2", {}, "League and roster"),
+            h("div", { class: "fgrid" }, numField("Teams in league", draft.teams, { min: 2, max: 32, step: 1 }, v => { draft.teams = Math.min(32, Math.max(2, Math.round(v))); })),
+            h("div", { class: "setgroup" }, "Starting lineup (spots per team)"),
+            h("div", { class: "fgrid" }, LINEUP_KEYS.map(k => numField(LINEUP_LABELS[k], L[k], { min: 0, max: 6, step: 1 }, v => { L[k] = Math.min(6, Math.max(0, Math.round(v))); }))),
+            h("div", { class: "setgroup" }, "Quick setups"),
+            chip("1 QB", () => { L.SUPERFLEX = 0; draft.qbPremium = 1; drawSettings(); }),
+            chip("Superflex", () => { L.SUPERFLEX = Math.max(1, L.SUPERFLEX); draft.qbPremium = Math.max(draft.qbPremium, 1.3); drawSettings(); }),
+            h("p", { class: "note" }, "More starters at a position means more of that position is needed, which raises the value of the stars at that position.")),
+          h("div", { class: "card", style: "margin-top:16px" }, h("h2", {}, "Trade calculator"),
+            h("div", { class: "fgrid" }, numField("QB trade premium (%)", Math.round((draft.qbPremium - 1) * 100), { min: 0, max: 100, step: 5 }, v => { draft.qbPremium = 1 + Math.min(100, Math.max(0, v)) / 100; })),
+            h("p", { class: "note" }, "Extra trade value for QBs on top of their projected points. Superflex trade markets usually price QBs well above their stats; use 0 for a one-QB league.")),
+          h("div", { class: "card", style: "margin-top:16px" }, h("h2", {}, "What your settings do"),
+            h("div", { class: "setsum", id: "setSummary" }))),
+        h("div", { class: "card" }, h("h2", {}, "Scoring (points per...)"),
+          h("div", { class: "setgroup" }, "Reception presets"),
+          chip("Standard (0)", () => setRec(0)), chip("Half PPR (0.5)", () => setRec(0.5)), chip("Full PPR (1)", () => setRec(1)),
+          SCORING_GROUPS.map(([title, rows]) => [h("div", { class: "setgroup", style: "margin-top:10px" }, title),
+            h("div", { class: "fgrid" }, rows.map(([k, label, step]) => numField(label, sc[k], { step }, v => { sc[k] = v; })))]),
+          h("p", { class: "note" }, "Rotowire and ESPN project full stat lines, so they are re-scored exactly. FantasyPros, Flock, FantasyCalc and Draft Sharks publish ranks only (for their own formats), so they are scaled onto your scoring using the points of the projection sources. Their ordering does not change with your settings."))));
+    refreshDraftUI();
+  }
+
+  applySettings(); drawSettings();
+})();
+</script>
+</body>
+</html>
