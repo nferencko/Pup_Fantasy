@@ -125,6 +125,8 @@
   .setgroup { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; margin: 4px 0 8px; }
   .setsum { font-size: 13px; line-height: 1.6; }
   .setsum b { color: var(--ink); }
+  .foot { margin-top: 36px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .foot a { color: var(--accent); }
   .empty { color: var(--muted); padding: 10px 0; font-size: 13px; }
   .stat { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 13px; margin-top: 10px; }
   .stat span:nth-child(odd) { color: var(--muted); } .stat span:nth-child(even) { text-align: right; font-variant-numeric: tabular-nums; }
@@ -211,6 +213,13 @@
 
   <!-- LEAGUE SETTINGS -->
   <section id="tab-settings" hidden></section>
+
+  <footer class="foot">
+    Pup Fantasy is an independent hobby project and is not affiliated with any of the services below. Rankings blend public projections and
+    rankings from Rotowire (via Sleeper), ESPN, FantasyPros, Flock Fantasy, FantasyCalc and Draft Sharks, re-scored for the league settings you choose.
+    For personal, non-commercial use. Player photos are served by ESPN. Not betting or financial advice.
+    <a href="https://github.com/nferencko/Pup_Fantasy">Source code on GitHub</a>.
+  </footer>
 </div>
 
 <script src="data/data.js"></script>
@@ -254,7 +263,7 @@
     : `${s.name}: unavailable, so it is left out of the averages`);
   // The rankings refresh daily at 9 AM Pacific; warn if the PC missed it (e.g. was off for a day or more).
   const ageHours = (Date.now() - new Date(D.updated.replace(" ", "T")).getTime()) / 36e5;
-  if (ageHours > 30) notices.unshift(`Rankings were last refreshed ${Math.floor(ageHours / 24)} day${Math.floor(ageHours / 24) === 1 ? "" : "s"} ago. They update daily at 9 AM Pacific when this PC is on.`);
+  if (ageHours > 30) notices.unshift(`Rankings were last refreshed ${Math.floor(ageHours / 24)} day${Math.floor(ageHours / 24) === 1 ? "" : "s"} ago. The data normally refreshes every day at 9 AM Pacific, so these numbers may be out of date.`);
   if (notices.length) { const w = $("#srcWarn"); w.hidden = false; w.textContent = notices.join(" · "); }
 
   // ---------- tabs

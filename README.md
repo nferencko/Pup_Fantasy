@@ -4,6 +4,8 @@
 
 # Pup Fantasy
 
+**Live site: https://nferencko.github.io/Pup_Fantasy/**
+
 A fantasy football **rest-of-season rankings site** that blends projections and rankings from six public sources and re-scores them for *your* league. Every feature (rankings, trades, start/sit, waivers) updates when you change your scoring or roster rules.
 
 It is a static site, plain HTML, CSS and JavaScript with no build step, plus a Python script that refreshes the data.
@@ -48,6 +50,8 @@ python update_data.py     # fetches data and writes data/data.js
 
 Then open `index.html` in a browser (it works straight from the file system).
 
+**Daily refresh on GitHub:** `.github/workflows/update-data.yml` runs the updater every day at 9:00 AM Pacific and commits the new `data/data.js`, which updates the live site.
+
 **Daily refresh on Windows:** `powershell -ExecutionPolicy Bypass -File schedule_update.ps1` creates a scheduled task that runs the updater every day at 9:00 AM (PC time).
 
 **League defaults** (scoring, teams, lineup) live at the top of `update_data.py` and can also be changed in the site's League settings tab.
@@ -64,7 +68,7 @@ Then open `index.html` in a browser (it works straight from the file system).
 
 ## Data and disclaimer
 
-Rankings and projections come from public pages and APIs of Rotowire (via Sleeper), ESPN, FantasyPros, Flock Fantasy, FantasyCalc and Draft Sharks. This project is not affiliated with any of them. **The generated data is not included in this repository**; run the updater yourself, and please check each site's terms of use before doing so. Player headshots are loaded from ESPN's image host. This is a personal, educational project.
+Rankings and projections come from public pages and APIs of Rotowire (via Sleeper), ESPN, FantasyPros, Flock Fantasy, FantasyCalc and Draft Sharks. This project is not affiliated with any of them. A snapshot of the blended data is published with the live site and refreshed daily. If you run the updater yourself, please check each site's terms of use first. Player headshots are loaded from ESPN's image host. This is a personal, educational, non-commercial project; if you represent one of these services and would like something changed or removed, please open an issue.
 
 ## Built with
 

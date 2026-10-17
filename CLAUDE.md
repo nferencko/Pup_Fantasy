@@ -61,6 +61,11 @@ Static HTML site (no build step) with three features: rest-of-season rankings, a
 - The build aborts without touching `data.js` if fewer than `MIN_SOURCES` (3) work or neither Rotowire nor ESPN is available. `data.js` is written via a temp file + atomic replace.
 - The scrapers raise specific errors (e.g. Draft Sharks "markup probably changed") so the failure message says what broke. When adding a source, wrap it with `src(...)` in `build()` and give it a validator.
 
+## Hosting (GitHub Pages) and the daily GitHub job
+- Live at https://nferencko.github.io/Pup_Fantasy/ (repo `nferencko/Pup_Fantasy`, Pages source: branch `main`, root). `data/data.js` is committed so the site works; `data/cache/` is not.
+- `.github/workflows/update-data.yml` runs `update_data.py` daily at 9 AM Pacific (two UTC crons + a Pacific-hour gate for daylight saving) and commits `data/data.js` when it changes; it can also be run by hand from the Actions tab. If the data sources block GitHub's servers the job fails and the last snapshot stays up (the page shows a stale-data notice after 30 hours).
+- The local Windows scheduled task (`FantasyRankingsDailyUpdate`) still updates the local copy only; pull before pushing local data to avoid conflicts, or just let GitHub own `data/data.js`.
+
 ## Look and feel
 - Palette comes from the logo (all CSS variables in `:root`, with a matching dark set under `prefers-color-scheme: dark`): cream page (`--bg`) and cards, navy ink/hero band (`--hero`), burnt-orange accent (`--accent`, buttons/pressed chips) and a brighter orange stripe (`--stripe`: top bar, active tab underline), tan, and collar-blue for WR/meter. Position tag colours: QB brick red, RB green, WR blue, TE brown, all with white text.
 - The header is a full-width navy band (`box-shadow` + `clip-path` trick) so the cream logo badge stands out. If you change the palette, keep the logo's cream (`#f6e6c8`), orange (`#e08a2c`) and navy (`#1d2433`) in mind (they are fixed inside `assets/logo.svg`).

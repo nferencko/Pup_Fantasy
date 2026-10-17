@@ -1,5 +1,5 @@
-# Generated data: rebuilt by update_data.py (third-party rankings, so not redistributed here)
-data/data.js
+# The published data snapshot (data/data.js) IS committed: GitHub Pages serves it and a daily workflow refreshes it.
+# Local-only files stay out:
 data/cache/
 data/update.log
 data/*.tmp

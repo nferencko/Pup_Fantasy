@@ -113,3 +113,8 @@
 **Blocked on:** GitHub CLI (`gh`) is not installed and the GitHub username is unknown, so the remote repo could not be created or pushed to. Needs the user to create an empty repo (or install and log in to `gh`) and decide: public vs private, whether to include a data snapshot, and whether to keep CLAUDE.md/LOG.md in the repo.
 
 **Update:** The user created https://github.com/nferencko/Pup_Fantasy (public). Added it as `origin` and pushed `main` (commit 0871c00); verified the remote matches, the repo page, logo and screenshots load, and `data/` is not published. To publish later changes: `git add -A && git commit -m "..." && git push`.
+
+**Request:** Make the GitHub link live through GitHub Pages.
+**Done:** Prepared the repo for Pages: committed the data snapshot (`data/data.js`, un-ignored), added `.nojekyll`, an attribution/not-affiliated footer on the site, a neutral stale-data notice (the old one mentioned "this PC"), README updates (live link, data disclosure, GitHub refresh), and a GitHub Actions workflow that refreshes the data daily at 9 AM Pacific and commits it. Pages must be switched on by the repo owner (Settings > Pages > Deploy from a branch > main / root); the live URL will be https://nferencko.github.io/Pup_Fantasy/.
+**Decision:** Publishing the data snapshot was needed for a working demo; this redistributes blended third-party rankings (see the README disclaimer). Chosen by the user's request to go live.
+**Open:** Not tested: whether the data sources accept requests from GitHub's servers (run the workflow once from the Actions tab). Scheduled workflows can be delayed and are paused by GitHub after 60 days without repo activity.
