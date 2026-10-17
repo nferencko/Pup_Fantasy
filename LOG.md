@@ -111,3 +111,5 @@
 **Request:** Put the project on the user's GitHub portfolio.
 **Done (local only, nothing pushed yet):** Initialized a git repo on `main` with one commit. Added `README.md` (features, architecture, run instructions, data disclaimer) and three screenshots in `docs/screenshots/`, plus `.gitignore` excluding generated/third-party data (`data/`), caches and `__pycache__`. Scanned for secrets or personal details: none. The commit uses the user's existing git identity.
 **Blocked on:** GitHub CLI (`gh`) is not installed and the GitHub username is unknown, so the remote repo could not be created or pushed to. Needs the user to create an empty repo (or install and log in to `gh`) and decide: public vs private, whether to include a data snapshot, and whether to keep CLAUDE.md/LOG.md in the repo.
+
+**Update:** The user created https://github.com/nferencko/Pup_Fantasy (public). Added it as `origin` and pushed `main` (commit 0871c00); verified the remote matches, the repo page, logo and screenshots load, and `data/` is not published. To publish later changes: `git add -A && git commit -m "..." && git push`.
