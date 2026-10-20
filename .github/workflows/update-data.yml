@@ -1,6 +1,7 @@
-# Refreshes data/data.js every day at 9:00 AM Pacific and commits it, which updates the GitHub Pages site.
-# GitHub cron runs in UTC, so two schedules are listed (PDT and PST); the first step lets only the one that
-# lands on 9 AM Pacific continue. Run it by hand any time from the Actions tab ("Run workflow").
+# Refreshes data/data.js every day starting at 9:00 AM Pacific and commits it, which updates the GitHub Pages site.
+# GitHub cron runs in UTC, so two schedules are listed (9 AM PDT and 9 AM PST). Both always run: GitHub often
+# starts scheduled jobs 1-2 hours late, so a "is it 9 AM yet" gate skipped the update. The second run of the day
+# is harmless (it only commits when the data changed). Run it by hand any time from the Actions tab.
 name: Update rankings data
 
 on:
@@ -21,26 +22,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Only continue at 9 AM Pacific (or when run by hand)
-        id: gate
-        run: |
-          hour=$(TZ=America/Los_Angeles date +%H)
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$hour" = "09" ]; then echo "go=true" >> "$GITHUB_OUTPUT"; fi
-
       - uses: actions/checkout@v4
-        if: steps.gate.outputs.go == 'true'
 
       - uses: actions/setup-python@v5
-        if: steps.gate.outputs.go == 'true'
         with:
           python-version: "3.12"
 
       - name: Fetch, validate and blend the sources
-        if: steps.gate.outputs.go == 'true'
         run: python update_data.py
 
       - name: Commit the new data (if it changed)
-        if: steps.gate.outputs.go == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

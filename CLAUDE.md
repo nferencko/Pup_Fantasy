@@ -63,7 +63,7 @@ Static HTML site (no build step) with three features: rest-of-season rankings, a
 
 ## Hosting (GitHub Pages) and the daily GitHub job
 - Live at https://nferencko.github.io/Pup_Fantasy/ (repo `nferencko/Pup_Fantasy`, Pages source: branch `main`, root). `data/data.js` is committed so the site works; `data/cache/` is not.
-- `.github/workflows/update-data.yml` runs `update_data.py` daily at 9 AM Pacific (two UTC crons + a Pacific-hour gate for daylight saving) and commits `data/data.js` when it changes; it can also be run by hand from the Actions tab. If the data sources block GitHub's servers the job fails and the last snapshot stays up (the page shows a stale-data notice after 30 hours).
+- `.github/workflows/update-data.yml` runs `update_data.py` daily starting 9 AM Pacific (two UTC crons, 16:00 and 17:00, both always run; no hour gate because GitHub starts scheduled jobs 1-2 hours late and a gate skipped every update) and commits `data/data.js` when it changes; it can also be run by hand from the Actions tab. If the data sources block GitHub's servers the job fails and the last snapshot stays up (the page shows a stale-data notice after 30 hours).
 - The local Windows scheduled task (`FantasyRankingsDailyUpdate`) still updates the local copy only; pull before pushing local data to avoid conflicts, or just let GitHub own `data/data.js`.
 
 ## Look and feel

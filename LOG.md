@@ -122,3 +122,9 @@
 **Request:** Add this project as card number two in the portfolio repo (https://github.com/nferencko/Nic-s-Programming-Projects).
 **Done:** The portfolio is a single static `index.html` with five project cards; card 2 was a "Project 2" placeholder. Replaced it with Pup Fantasy in the same format as card 1 (description, tags, "View live site" and "View source" buttons, project link) and kept the original reflection placeholder for the user to write. Preserved the file's CRLF line endings and added a small `.btn + .btn` spacing rule. Pushed to that repo's `main` (commit c6bf275); the live portfolio page updated within about a minute.
 **Left for the user:** the card-2 Reflection text, and two things noticed but not changed on the portfolio page: the footer link still points to `github.com/YOUR-USERNAME`, and the page's `<title>` still says "Theme preview".
+
+## 2026-10-20
+**Request:** Start/sit still showed week 6; verify updates and make sure the site refreshes daily at 9 AM Pacific.
+**Found:** The local copy was fine (week 7, updated 9:00 today by the Windows task). The live site was stuck on the Oct 16 snapshot because the GitHub workflow ran every day but did nothing: its Pacific-hour gate (`hour == 09`) failed, since GitHub started the scheduled runs about 2 hours late (11 AM and 1 PM Pacific). Runs showed "success", which hid it.
+**Done:** Removed the gate from `.github/workflows/update-data.yml` (both crons now always run; it only commits when data changed) and pushed the current week-7 `data/data.js` so the site updates immediately.
+**Open:** GitHub may still start the job later than 9:00 (its scheduler is best-effort); the data will land the same morning. Verify tomorrow that a "Update rankings data" bot commit appears.
