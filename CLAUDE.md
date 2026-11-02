@@ -63,8 +63,8 @@ Static HTML site (no build step) with three features: rest-of-season rankings, a
 
 ## Hosting (GitHub Pages) and the daily GitHub job
 - Live at https://nferencko.github.io/Pup_Fantasy/ (repo `nferencko/Pup_Fantasy`, Pages source: branch `main`, root). `data/data.js` is committed so the site works; `data/cache/` is not.
-- `.github/workflows/update-data.yml` runs `update_data.py` daily starting 9 AM Pacific (two UTC crons, 16:00 and 17:00, both always run; no hour gate because GitHub starts scheduled jobs 1-2 hours late and a gate skipped every update) and commits `data/data.js` when it changes; it can also be run by hand from the Actions tab. If the data sources block GitHub's servers the job fails and the last snapshot stays up (the page shows a stale-data notice after 30 hours).
-- The local Windows scheduled task (`FantasyRankingsDailyUpdate`) still updates the local copy only; pull before pushing local data to avoid conflicts, or just let GitHub own `data/data.js`.
+- `.github/workflows/update-data.yml` can run `update_data.py` by hand (no schedule) and commits `data/data.js` when it changes; it can also be run by hand from the Actions tab. If the data sources block GitHub's servers the job fails and the last snapshot stays up (the page shows a stale-data notice after 30 hours).
+- The workflow's schedule is turned off (the sources block GitHub's servers); it is manual-only now. The local Windows task owns the daily update: after `update_data.py` succeeds, `update_scheduled.bat` commits `data/data.js` if it changed, runs `git pull --rebase -X theirs` and pushes, logging to `data/update.log`. It needs git push credentials available non-interactively (Git Credential Manager).
 
 ## Look and feel
 - Palette comes from the logo (all CSS variables in `:root`, with a matching dark set under `prefers-color-scheme: dark`): cream page (`--bg`) and cards, navy ink/hero band (`--hero`), burnt-orange accent (`--accent`, buttons/pressed chips) and a brighter orange stripe (`--stripe`: top bar, active tab underline), tan, and collar-blue for WR/meter. Position tag colours: QB brick red, RB green, WR blue, TE brown, all with white text.

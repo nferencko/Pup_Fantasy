@@ -128,3 +128,9 @@
 **Found:** The local copy was fine (week 7, updated 9:00 today by the Windows task). The live site was stuck on the Oct 16 snapshot because the GitHub workflow ran every day but did nothing: its Pacific-hour gate (`hour == 09`) failed, since GitHub started the scheduled runs about 2 hours late (11 AM and 1 PM Pacific). Runs showed "success", which hid it.
 **Done:** Removed the gate from `.github/workflows/update-data.yml` (both crons now always run; it only commits when data changed) and pushed the current week-7 `data/data.js` so the site updates immediately.
 **Open:** GitHub may still start the job later than 9:00 (its scheduler is best-effort); the data will land the same morning. Verify tomorrow that a "Update rankings data" bot commit appears.
+
+## 2026-11-01
+**Request:** Stats weren't updating on the live site; asked if refreshing on every page load would fix it.
+**Found:** No: FantasyPros, Draft Sharks and ESPN don't allow browser (CORS) requests, and the blend lives in Python. The GitHub job is blocked by the sources.
+**Done (option 2, chosen by the user):** `update_scheduled.bat` now commits and pushes `data/data.js` after a successful 9 AM local update; the GitHub workflow's schedule was removed (manual-only). CLAUDE.md updated.
+**Open:** The PC must be on at 9 AM (or on later; StartWhenAvailable) and git must be able to push without a prompt.

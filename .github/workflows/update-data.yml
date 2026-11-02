@@ -1,13 +1,10 @@
-# Refreshes data/data.js every day starting at 9:00 AM Pacific and commits it, which updates the GitHub Pages site.
-# GitHub cron runs in UTC, so two schedules are listed (9 AM PDT and 9 AM PST). Both always run: GitHub often
-# starts scheduled jobs 1-2 hours late, so a "is it 9 AM yet" gate skipped the update. The second run of the day
-# is harmless (it only commits when the data changed). Run it by hand any time from the Actions tab.
+# Manual-only refresh of data/data.js (Actions tab > Run workflow). The daily update runs on the local PC instead,
+# because the data sources block GitHub's servers; see update_scheduled.bat.
 name: Update rankings data
 
 on:
-  schedule:
-    - cron: "0 16 * * *"   # 9:00 AM Pacific Daylight Time
-    - cron: "0 17 * * *"   # 9:00 AM Pacific Standard Time
+  # Scheduled runs are off: GitHub's servers get blocked by the data sources. The local Windows task
+  # (update_scheduled.bat) updates and pushes data/data.js instead. This can still be run by hand.
   workflow_dispatch:
 
 permissions:
